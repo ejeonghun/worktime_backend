@@ -7,6 +7,7 @@ import com.lunadev.worktime.company.dto.CreateAdminRequestDto;
 import com.lunadev.worktime.company.dto.CreateRequestDto;
 import com.lunadev.worktime.company.entity.Company;
 import com.lunadev.worktime.company.repository.CompanyRepository;
+import com.lunadev.worktime.utils.CustomUserDetails;
 import com.lunadev.worktime.utils.JwtUtil;
 import com.lunadev.worktime.member.repository.MemberRepository;
 import com.lunadev.worktime.member.dto.CustomUserInfoDto;
@@ -16,6 +17,12 @@ import com.lunadev.worktime.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,25 +40,25 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public LoginResponseDto login(LoginRequestDto dto) {
+    public String login(LoginRequestDto dto) {
         String email = dto.getEmail();
         String password = dto.getPassword();
         Member member = memberRepository.findMemberByEmail(email);
 
         if (member == null) {
             // 사용자 찾기 실패 시 예외 발생
-            return createErrorResponse(HttpStatus.UNAUTHORIZED, "이메일이 존재하지 않습니다.");
+            throw new UsernameNotFoundException("이메일이 존재하지 않습니다.");
         }
 
         // 비밀번호 검증
         if (!encoder.matches(password, member.getPassword())) {
-            return createErrorResponse(HttpStatus.UNAUTHORIZED, "비밀번호가 일치하지 않습니다.");
+            throw new BadCredentialsException("비밀번호가 일치하지 않습니다.");
         }
 
         CustomUserInfoDto info = modelMapper.map(member, CustomUserInfoDto.class);
 
         String token = jwtUtil.createAccessToken(info);
-        return new LoginResponseDto(token, HttpStatus.OK, "로그인 성공");
+        return token;
     }
 
     @Override
@@ -102,6 +109,31 @@ public class AuthServiceImpl implements AuthService {
 
         return true;
     }
+
+    @Override
+    public Long getUserId(String token) {
+        return jwtUtil.getUserId(token);
+    }
+
+    @Override
+    public CustomUserInfoDto getUserInfo() {
+        // SecurityContextHolder에서 인증 정보 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            System.out.println("Username: " + userDetails.getUsername());
+            System.out.println("Authorities: " + userDetails.getAuthorities());
+            System.out.println("Memeber: " + userDetails.getMember().getEmail());
+
+            // UserDetails에서 CustomUserInfoDto로 변환
+            return modelMapper.map(userDetails.getMember(), CustomUserInfoDto.class);
+        }
+
+        throw new RuntimeException("인증 정보가 없습니다.");
+    }
+
+
 
     // 오류 응답 생성 메소드
     private LoginResponseDto createErrorResponse(HttpStatus status, String message) {
