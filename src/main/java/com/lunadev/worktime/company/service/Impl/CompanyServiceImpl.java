@@ -68,8 +68,8 @@ public class CompanyServiceImpl implements CompanyService {
 
         if (authService.adminCreate(adminDto))
             // ResponseDto 반환
-            return new ResponseDto(HttpStatus.OK,"성공적으로 생성되었습니다.", LocalDateTime.now());
+            return new ResponseDto(HttpStatus.OK,"성공적으로 생성되었습니다.", CreatedCompany, LocalDateTime.now());
 
-        return new ResponseDto(HttpStatus.BAD_REQUEST, "실패했습니다.", LocalDateTime.now());
+        return new ResponseDto(HttpStatus.BAD_REQUEST, "실패했습니다.", null ,LocalDateTime.now());
     }
 }

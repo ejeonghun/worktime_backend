@@ -22,6 +22,9 @@ public class ResponseDto {
     @NotNull
     private String message;
 
+    @Schema(description = "데이터", example = "data: {}")
+    private Object data;
+
     @Schema(description = "오류 발생 시간", example = "2024-10-24T12:34:56")
     @NotNull
     private LocalDateTime timestamp;

@@ -2,6 +2,7 @@ package com.lunadev.worktime.member.entity;
 
 import com.lunadev.worktime.Enum.RoleType;
 import com.lunadev.worktime.company.entity.Company;
+import com.lunadev.worktime.company.entity.Department;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,6 +22,10 @@ public class Member {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "company_id")
     private Company company;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
