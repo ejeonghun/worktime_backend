@@ -1,6 +1,7 @@
 package com.lunadev.worktime.company.service;
 
 import com.lunadev.worktime.company.dto.DeptDto;
+import com.lunadev.worktime.company.dto.DeptJoinDto;
 import com.lunadev.worktime.company.dto.DeptMemberListDto;
 import com.lunadev.worktime.utils.ResponseDto;
 import com.lunadev.worktime.utils.ResultDTO;
@@ -14,5 +15,7 @@ public interface DepartmentService {
 
     ResultDTO<Object>  delete(Long id);
 
-    DeptMemberListDto findAll();
+    ResultDTO<Object> findAll();
+
+    ResultDTO<Object> join(DeptJoinDto dto);
 }

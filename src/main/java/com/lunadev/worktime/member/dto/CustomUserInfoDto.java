@@ -19,6 +19,8 @@ public class CustomUserInfoDto extends MemberDto{
 
     private Company company;
 
+    private String position;
+
     private RoleType role;
 
 }

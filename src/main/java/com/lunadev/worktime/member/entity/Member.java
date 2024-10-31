@@ -36,6 +36,9 @@ public class Member {
     @Column(name = "password", nullable = false)
     private String password;
 
+    @Column(name="position")
+    private String position;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "ROLE", nullable = false, columnDefinition = "VARCHAR(30) DEFAULT 'USER'")
     private RoleType role = RoleType.USER; // 기본값 설정

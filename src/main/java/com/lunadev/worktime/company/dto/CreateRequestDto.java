@@ -16,6 +16,9 @@ public class CreateRequestDto {
     @NotBlank
     private String companyName;
 
+    private Double latitude;
+    private Double longitude;
+
     private String email; // 관리자 이메일
 
     private String name; // 관리자 이름

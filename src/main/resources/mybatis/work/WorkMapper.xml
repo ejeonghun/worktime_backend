@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lunadev.worktime.work.repository.WorkMapper">
+    <select id="getWorkList" parameterType="map" resultType="package com.lunadev.worktime.work.dto.WorkListDto">
+        SELECT
+            w.work_id AS workId,
+            w.date AS date,
+        w.work_type AS workType,
+        m.member_id AS memberId,
+        m.company_id AS companyId,
+        d.dept_id AS deptId,
+        d.dept_name AS deptName,
+        m.member_name AS memberName
+        FROM
+            work w
+            JOIN
+            member m ON w.member_id = m.member_id
+            JOIN
+            department d ON m.dept_id = d.dept_id
+        WHERE
+            w.date = #{date} AND m.company_id = #{companyId}
+    </select>
+</mapper>

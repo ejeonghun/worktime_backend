@@ -57,6 +57,8 @@ public class CompanyServiceImpl implements CompanyService {
         // 새로운 인증 코드를 사용하여 회사 객체 생성
         Company newCompany = Company.builder()
                             .companyName(dto.getCompanyName())
+                            .latitude(dto.getLatitude())
+                            .longitude(dto.getLongitude())
                             .verifyCode(generatedCode)
                             .build();
 

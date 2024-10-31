@@ -25,6 +25,12 @@ public class Company {
     @Column(name="verify_code")
     private String verifyCode;
 
+    @Column(name="latitude") // 위도
+    private Double latitude;
+
+    @Column(name="longitude") // 경도
+    private Double longitude;
+
     @OneToMany(mappedBy = "company", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Member> members;
 }

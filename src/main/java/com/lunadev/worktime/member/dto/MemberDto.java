@@ -13,5 +13,6 @@ public class MemberDto {
     private String name;
     private String password;
     private RoleType role;
+    private String position;
     private Company company;
 }
