@@ -79,8 +79,11 @@ public class AuthServiceImpl implements AuthService {
 
         if (verifyCode != null) {
             company = companyRepository.findCompanyByVerifyCode(verifyCode);
+            if (company == null) {
+                return createErrorResponse(HttpStatus.BAD_REQUEST, "존재하지 않는 회사코드 입니다.");
+            }
         } else {
-            return createErrorResponse(HttpStatus.BAD_REQUEST, "존재하지 않는 회사코드 입니다.");
+            return createErrorResponse(HttpStatus.BAD_REQUEST, "회사코드를 입력해주세요.");
         }
 
         Member newMember = modelMapper.map(dto, Member.class);

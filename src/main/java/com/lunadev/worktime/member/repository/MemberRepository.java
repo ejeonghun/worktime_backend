@@ -15,8 +15,4 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     Member findMemberByEmail(String email);
 
     List<Member> findByCompany(Company company);
-
-    @Query("SELECT m FROM Member m LEFT JOIN FETCH m.department LEFT JOIN FETCH m.works w WHERE m.company = :company AND (w.date = :date OR w.date IS NULL)")
-    List<Member> findMembersWithDepartmentAndWorkByCompanyAndDate(@Param("company") Company company, @Param("date") LocalDate date);
-
 }

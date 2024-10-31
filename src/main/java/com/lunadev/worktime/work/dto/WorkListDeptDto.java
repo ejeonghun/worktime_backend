@@ -11,5 +11,5 @@ import java.util.List;
 @NoArgsConstructor
 public class WorkListDeptDto {
     private String deptName;
-    private List<WorkMemberListDto> memberList; // 부서에 속한 사원들의 출근 정보 리스트
+    private List<WorkMemberDto> memberList; // 부서에 속한 사원들의 출근 정보 리스트
 }

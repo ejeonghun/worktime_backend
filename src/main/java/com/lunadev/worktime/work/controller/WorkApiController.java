@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/work")
@@ -24,7 +26,7 @@ public class WorkApiController {
     }
 
     @GetMapping("list")
-    public ResultDTO<Object> workList() {
-        return workService.workList();
+    public ResultDTO<Object> workList(@RequestParam String date) {
+        return workService.workList(date);
     }
 }

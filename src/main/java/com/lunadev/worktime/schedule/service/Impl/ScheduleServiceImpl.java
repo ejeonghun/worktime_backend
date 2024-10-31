@@ -2,6 +2,7 @@ package com.lunadev.worktime.schedule.service.Impl;
 
 import com.lunadev.worktime.Enum.ScheduleType;
 import com.lunadev.worktime.Enum.WorkType;
+import com.lunadev.worktime.schedule.dto.ScheduleRequestDto;
 import com.lunadev.worktime.schedule.entity.Schedule;
 import com.lunadev.worktime.schedule.repository.ScheduleRepository;
 import com.lunadev.worktime.work.entity.Work;
@@ -21,16 +22,18 @@ public class ScheduleServiceImpl {
     private final WorkRepository workRepository;
 
     @Transactional
-    public void createSchedule(Schedule schedule) {
-        scheduleRepository.save(schedule);
+    public void createSchedule(ScheduleRequestDto dto) {
+        // scheduleRepository.save(dto);
 
-        if (schedule.getScheduleType() == ScheduleType.VACATION) {
-            Stream.iterate(schedule.getStartDate().toLocalDate(), date -> date.plusDays(1))
-                    .limit(schedule.getEndDate().toLocalDate().toEpochDay() - schedule.getStartDate().toLocalDate().toEpochDay() + 1)
+
+        // 만약 휴가라면 휴가 일정을 work 테이블에 추가
+        if (dto.getScheduleType() == ScheduleType.VACATION) {
+            Stream.iterate(dto.getStartDate().toLocalDate(), date -> date.plusDays(1))
+                    .limit(dto.getEndDate().toLocalDate().toEpochDay() - dto.getStartDate().toLocalDate().toEpochDay() + 1)
                     .forEach(date -> {
                         Work work = Work.builder()
-                                .member(schedule.getMember())
-                                .company(schedule.getCompany())
+                                .member(dto.getMember())
+                                .company(dto.getCompany())
                                 .date(date)
                                 .workType(WorkType.VACATION)
                                 .build();

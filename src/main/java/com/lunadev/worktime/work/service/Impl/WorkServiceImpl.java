@@ -3,7 +3,6 @@ package com.lunadev.worktime.work.service.Impl;
 import com.lunadev.worktime.Enum.ApiResponseCode;
 import com.lunadev.worktime.Enum.WorkType;
 import com.lunadev.worktime.company.entity.Company;
-import com.lunadev.worktime.company.entity.Department;
 import com.lunadev.worktime.member.entity.Member;
 import com.lunadev.worktime.member.repository.MemberRepository;
 import com.lunadev.worktime.utils.AuthUserInfo;
@@ -28,7 +27,7 @@ public class WorkServiceImpl implements WorkService {
     private final WorkRepository workRepository;
     private final AuthUserInfo authUserInfo;
     private final MemberRepository memberRepository;
-    private WorkMapper workMapper;
+    private final WorkMapper workMapper;
 
     /**
      * Haversine Formula로 거리 계산 메소드
@@ -145,52 +144,76 @@ public class WorkServiceImpl implements WorkService {
         }
     }
 
+
     @Override
-    public ResultDTO<Object> workList(Date date) {
-        Company company = authUserInfo.getAuthenticatedCompany(); // 인증된 사용자의 회사 정보 가져오기
-        Member currentUser = authUserInfo.getAuthenticatedMember(); // JWT 토큰으로 현재 회원 정보 가져오기
+    public ResultDTO<Object> workList(String date) {
+        try {
+            Company company = authUserInfo.getAuthenticatedCompany();
+            Member member = authUserInfo.getAuthenticatedMember();
+            Long companyId = company.getCompanyId();
+            List<WorkListDto> workList = workMapper.getWorkList(date, companyId);
 
-        // MyBatis를 통해 근태 정보를 조회
-        List<WorkListDto> attendanceRecords = workMapper.getAttendanceRecords(date, company.getCompanyId());
+            // 현재 로그인한 사용자의 출근 정보 찾기
+            WorkListDto userWorkInfo = workList.stream()
+                    .filter(work -> work.getMemberId().equals(member.getMemberId()))
+                    .findFirst()
+                    .orElse(null);
 
-        // 근태 정보를 부서별로 그룹화
-        Map<String, List<WorkMemberListDto>> workByDept = attendanceRecords.stream()
-                .map(record -> new WorkMemberListDto(
-                        record.getMemberId(),
-                        record.getMemberName(),
-                        record.getWorkType()))
-                .collect(Collectors.groupingBy(
-                        WorkMemberListDto::getDeptName
-                ));
+            // 사용자 정보 DTO 생성
+            WorkMemberDto userInfo = new WorkMemberDto(
+                    member.getMemberId(),
+                    member.getName(),
+                    userWorkInfo != null ? WorkType.getValue(userWorkInfo.getWorkType().intValue()) : WorkType.NOT_CHECK_IN,
+                    member.getPosition() != null ? member.getPosition() : "직급 없음"
+            );
 
-        // 유저 정보 생성
-        WorkUserInfo userInfo = new WorkUserInfo(
-                currentUser.getMemberId(),
-                currentUser.getName(),
-                // 부서 이름을 찾기 위해 검색
-                workByDept.values().stream()
-                        .flatMap(List::stream)
-                        .filter(member -> member.getMemberId().equals(currentUser.getMemberId()))
-                        .findFirst()
-                        .map(WorkMemberListDto::getDeptName)
-                        .orElse("기타"), // 부서가 없을 경우 "기타"
-                attendanceRecords.stream()
-                        .filter(record -> record.getMemberId().equals(currentUser.getMemberId()))
-                        .map(AttendanceRecordDto::getWorkType)
-                        .findFirst()
-                        .orElse(WorkType.NOT_CHECK_IN.name()), // 출근 기록이 없을 경우
-                attendanceRecords.stream()
-                        .anyMatch(record -> record.getMemberId().equals(currentUser.getMemberId()) && record.isCheckedIn()) // 출근 여부
-        );
+            // 부서별로 그룹화
+            Map<String, List<WorkMemberDto>> deptGroupMap = workList.stream()
+                    .collect(Collectors.groupingBy(
+                            dto -> dto.getDeptName() == null ? "기타" : dto.getDeptName(),
+                            Collectors.mapping(
+                                    work -> new WorkMemberDto(
+                                            work.getMemberId(),
+                                            work.getMemberName(),
+                                            WorkType.getValue(work.getWorkType().intValue()),
+                                            work.getPosition() == null ? "직급 없음" : work.getPosition()
+                                    ),
+                                    Collectors.toList()
+                            )
+                    ));
 
-        // 부서별 출근 정보를 WorkListDeptDto 리스트로 변환
-        List<WorkListDeptDto> workListByDeptDtos = workByDept.entrySet().stream()
-                .map(entry -> new WorkListDeptDto(entry.getKey(), entry.getValue()))
-                .collect(Collectors.toList());
+            // 부서 리스트 생성 및 정렬
+            List<WorkListDeptDto> deptList = deptGroupMap.entrySet().stream()
+                    .map(entry -> new WorkListDeptDto(
+                            entry.getKey(),
+                            entry.getValue()
+                    ))
+                    .sorted((a, b) -> {
+                        if (a.getDeptName().equals("기타")) return 1;
+                        if (b.getDeptName().equals("기타")) return -1;
+                        return a.getDeptName().compareTo(b.getDeptName());
+                    })
+                    .collect(Collectors.toList());
 
-        // 최종 응답 객체 생성
-        WorkListResponseDto response = new WorkListResponseDto(userInfo, workListByDeptDtos);
+            // 최종 응답 데이터 구조 생성
+            Map<String, Object> resultData = new HashMap<>();
+            resultData.put("userInfo", userInfo);
+            resultData.put("deptList", deptList);
 
-        return ResultDTO.of(true, "WORK_LIST_SUCCESS", "출근 목록 조회 성공", response);
+            return ResultDTO.of(
+                    true,
+                    "WORK_LIST_SUCCESS",
+                    "출근부 조회 성공",
+                    resultData
+            );
+
+        } catch (Exception e) {
+            return ResultDTO.of(
+                    false,
+                    ApiResponseCode.FAILED.getCode(),
+                    "오류 발생: " + e.getMessage(),
+                    null
+            );
+        }
     }
 }

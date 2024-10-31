@@ -24,7 +24,7 @@ public class Member {
     private Company company;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "department_id")
+    @JoinColumn(name = "dept_id")
     private Department department;
 
     @Column(name = "email", nullable = false, unique = true)

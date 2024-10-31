@@ -4,7 +4,6 @@ import com.lunadev.worktime.work.dto.WorkListDto;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.Date;
 import java.util.List;
 
 @Mapper
@@ -16,5 +15,5 @@ public interface WorkMapper {
      * @param companyId 회사 ID
      * @return 근태 정보 리스트
      */
-    List<WorkListDto> getAttendanceRecords(@Param("date") Date date, @Param("companyId") Long companyId);
+    List<WorkListDto> getWorkList(@Param("date") String date, @Param("companyId") Long companyId);
 }
