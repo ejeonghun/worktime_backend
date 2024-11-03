@@ -163,6 +163,7 @@ public class WorkServiceImpl implements WorkService {
             WorkMemberDto userInfo = new WorkMemberDto(
                     member.getMemberId(),
                     member.getName(),
+                    member.getImagePath(),
                     userWorkInfo != null ? WorkType.getValue(userWorkInfo.getWorkType().intValue()) : WorkType.NOT_CHECK_IN,
                     member.getPosition() != null ? member.getPosition() : "직급 없음"
             );
@@ -175,6 +176,7 @@ public class WorkServiceImpl implements WorkService {
                                     work -> new WorkMemberDto(
                                             work.getMemberId(),
                                             work.getMemberName(),
+                                            work.getImagePath(),
                                             WorkType.getValue(work.getWorkType().intValue()),
                                             work.getPosition() == null ? "직급 없음" : work.getPosition()
                                     ),

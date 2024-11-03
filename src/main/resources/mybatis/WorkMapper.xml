@@ -9,20 +9,24 @@
             w.date AS date,
         CASE
             WHEN s.schedule_type = 1 THEN 3
-            WHEN s.schedule_type IS NULL THEN 4
-            ELSE w.work_type
+            WHEN s.schedule_type IS NULL AND w.work_type IS NULL THEN 4
+            ELSE COALESCE(w.work_type, 4) -- work_type이 NULL이 아니면 그대로 사용하고, NULL이면 4 사용
             END AS workType,
         m.member_id AS memberId,
         m.position AS position,
         m.company_id AS companyId,
         d.dept_id AS deptId,
         d.dept_name AS deptName,
-        m.name AS memberName
+        m.name AS memberName,
+        m.image_path AS imagePath
     FROM
         member m
-            LEFT JOIN work w ON w.member_id = m.member_id AND w.date = #{date}
-            LEFT JOIN dept d ON m.dept_id = d.dept_id
-            LEFT JOIN schedule s ON m.member_id = s.member_id
+    LEFT JOIN
+        work w ON w.member_id = m.member_id AND w.date = #{date}
+    LEFT JOIN
+        dept d ON m.dept_id = d.dept_id
+    LEFT JOIN
+        schedule s ON m.member_id = s.member_id
     WHERE
         m.company_id = #{companyId}
     </select>

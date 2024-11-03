@@ -20,4 +20,5 @@ public class WorkListDto {
         private Long deptId;       // 부서 ID
         private String deptName;   // 부서 이름
         private String position;   // 직급
+        private String imagePath;  // 사원 이미지
 }

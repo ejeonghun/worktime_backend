@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class WorkMemberDto {
     private Long memberId;
     private String memberName;
+    private String imagePath;
     private WorkType workType;
     private String position;
 }

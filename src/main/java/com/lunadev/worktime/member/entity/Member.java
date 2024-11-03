@@ -39,6 +39,9 @@ public class Member {
     @Column(name="position")
     private String position;
 
+    @Column(name="image_path")
+    private String imagePath;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "ROLE", nullable = false, columnDefinition = "VARCHAR(30) DEFAULT 'USER'")
     private RoleType role = RoleType.USER; // 기본값 설정
