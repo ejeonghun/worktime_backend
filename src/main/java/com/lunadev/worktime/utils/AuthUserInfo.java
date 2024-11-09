@@ -1,6 +1,7 @@
 package com.lunadev.worktime.utils;
 
 import com.lunadev.worktime.company.entity.Company;
+import com.lunadev.worktime.company.entity.Department;
 import com.lunadev.worktime.company.repository.CompanyRepository;
 import com.lunadev.worktime.member.entity.Member;
 import com.lunadev.worktime.member.repository.MemberRepository;
@@ -22,7 +23,7 @@ public class AuthUserInfo {
     /**
      * 헤더에 Bearer Token 정보로 해당 유저의 소속 회사 반환 메소드
      */
-    public Company getAuthenticatedCompany() { // 접근 제한자 변경
+    public Company getAuthenticatedCompany() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails userDetails) {
@@ -38,7 +39,7 @@ public class AuthUserInfo {
     /**
      * 헤더에 Bearer Token 정보로 해당 유저의 Id 반환 메소드
      */
-    public Member getAuthenticatedMember() { // 접근 제한자 변경 및 메소드 이름 변경
+    public Member getAuthenticatedMember() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.getPrincipal() instanceof CustomUserDetails userDetails) {

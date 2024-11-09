@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 
 @Data
@@ -21,4 +22,5 @@ public class WorkListDto {
         private String deptName;   // 부서 이름
         private String position;   // 직급
         private String imagePath;  // 사원 이미지
+        private LocalDateTime startTime;
 }

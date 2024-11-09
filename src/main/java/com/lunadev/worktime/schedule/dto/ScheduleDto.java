@@ -1,10 +1,6 @@
 package com.lunadev.worktime.schedule.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.lunadev.worktime.Enum.ScheduleType;
-import com.lunadev.worktime.company.entity.Company;
-import com.lunadev.worktime.company.entity.Department;
-import com.lunadev.worktime.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,16 +12,18 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScheduleRequestDto {
-
+public class ScheduleDto {
     private Long scheduleId;
     private String scheduleName;
     private ScheduleType scheduleType;
     private String scheduleDetails;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime startDate;
-
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime endDate;
+
+    private Long memberId;
+    private Long companyId;
+    private Long deptId;
+
+    private String memberName;
+    private String deptName;
 }

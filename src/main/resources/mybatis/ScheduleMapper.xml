@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lunadev.worktime.schedule.repository.ScheduleMapper">
+
+    <select id="getScheduleList" resultType="com.lunadev.worktime.schedule.dto.ScheduleDto">
+        SELECT s.schedule_id AS scheduleId,
+               s.schedule_name AS scheduleName,
+               s.schedule_type AS scheduleType,
+               s.schedule_details AS scheduleDetails,
+               s.start_date AS startDate,
+               s.end_date AS endDate,
+               m.member_id AS memberId,
+               s.company_id AS companyId,
+               s.dept_id AS deptId,
+                m.name AS memberName,
+                d.dept_name AS deptName
+        FROM schedule s
+                 JOIN member m ON s.member_id = m.member_id
+                 JOIN company c ON s.company_id = c.company_id
+                 JOIN dept d ON s.dept_id = d.dept_id
+        WHERE c.company_id = #{companyId}
+          AND DATE_FORMAT(s.start_date, '%Y-%m') = #{date}
+    </select>
+</mapper>

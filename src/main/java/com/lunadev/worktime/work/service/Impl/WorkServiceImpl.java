@@ -15,6 +15,7 @@ import com.lunadev.worktime.work.service.WorkService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -127,7 +128,7 @@ public class WorkServiceImpl implements WorkService {
         LocalDateTime endTime = LocalDateTime.now();
 
         // 근무 시간 계산 (분 단위로 계산 후 저장)
-        long workMinutes = java.time.Duration.between(existingWork.getStartTime(), endTime).toMinutes();
+        long workMinutes = Duration.between(existingWork.getStartTime(), endTime).toMinutes();
 
         // Work 엔티티 업데이트
         existingWork.setEndTime(endTime);
@@ -151,6 +152,7 @@ public class WorkServiceImpl implements WorkService {
             Company company = authUserInfo.getAuthenticatedCompany();
             Member member = authUserInfo.getAuthenticatedMember();
             Long companyId = company.getCompanyId();
+            String companyName = company.getCompanyName();
             List<WorkListDto> workList = workMapper.getWorkList(date, companyId);
 
             // 현재 로그인한 사용자의 출근 정보 찾기
@@ -165,7 +167,8 @@ public class WorkServiceImpl implements WorkService {
                     member.getName(),
                     member.getImagePath(),
                     userWorkInfo != null ? WorkType.getValue(userWorkInfo.getWorkType().intValue()) : WorkType.NOT_CHECK_IN,
-                    member.getPosition() != null ? member.getPosition() : "직급 없음"
+                    member.getPosition() != null ? member.getPosition() : "직급 없음",
+                    userWorkInfo != null ? userWorkInfo.getStartTime() : null
             );
 
             // 부서별로 그룹화
@@ -178,7 +181,8 @@ public class WorkServiceImpl implements WorkService {
                                             work.getMemberName(),
                                             work.getImagePath(),
                                             WorkType.getValue(work.getWorkType().intValue()),
-                                            work.getPosition() == null ? "직급 없음" : work.getPosition()
+                                            work.getPosition() == null ? "직급 없음" : work.getPosition(),
+                                            work.getStartTime()
                                     ),
                                     Collectors.toList()
                             )
@@ -201,6 +205,7 @@ public class WorkServiceImpl implements WorkService {
             Map<String, Object> resultData = new HashMap<>();
             resultData.put("userInfo", userInfo);
             resultData.put("deptList", deptList);
+            resultData.put("companyInfo", companyName);
 
             return ResultDTO.of(
                     true,

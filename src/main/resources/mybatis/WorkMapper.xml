@@ -18,7 +18,8 @@
         d.dept_id AS deptId,
         d.dept_name AS deptName,
         m.name AS memberName,
-        m.image_path AS imagePath
+        m.image_path AS imagePath,
+        w.start_time AS startTime
     FROM
         member m
     LEFT JOIN

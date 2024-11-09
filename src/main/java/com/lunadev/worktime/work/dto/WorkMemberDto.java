@@ -16,4 +16,5 @@ public class WorkMemberDto {
     private String imagePath;
     private WorkType workType;
     private String position;
+    private LocalDateTime startTime;
 }
