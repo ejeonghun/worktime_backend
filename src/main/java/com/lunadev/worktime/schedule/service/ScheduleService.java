@@ -11,4 +11,5 @@ public interface ScheduleService {
     ResultDTO<Object> deleteSchedule(Long id);
     ResultDTO<Object> getSchedule(Long id);
     ResultDTO<Object> getSchedules(String date);
+    ResultDTO<Object> getScheduleDate(String date);
 }

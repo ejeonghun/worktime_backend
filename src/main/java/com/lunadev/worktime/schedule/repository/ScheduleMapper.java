@@ -16,4 +16,12 @@ public interface ScheduleMapper {
      * @return 스케줄 정보 리스트
      */
     List<ScheduleDto> getScheduleList(@Param("date") String date, @Param("companyId") Long companyId);
+
+    /**
+     * 특정 회사의 해당 일자에 해당하는 스케줄 리스트를 조회
+     * @param date 년/월/일 (예: "2024-11-01")
+     * @param companyId 회사 ID
+     * @return 스케줄 정보 리스트
+     */
+    List<ScheduleDto> getScheduleDate(@Param("date") String date, @Param("companyId") Long companyId);
 }

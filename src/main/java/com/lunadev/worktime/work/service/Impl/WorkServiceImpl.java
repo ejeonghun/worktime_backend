@@ -12,6 +12,7 @@ import com.lunadev.worktime.work.entity.Work;
 import com.lunadev.worktime.work.repository.WorkMapper;
 import com.lunadev.worktime.work.repository.WorkRepository;
 import com.lunadev.worktime.work.service.WorkService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -49,6 +50,7 @@ public class WorkServiceImpl implements WorkService {
         return distance;
     }
 
+    @Transactional
     @Override
     public ResultDTO<Object> checkIn(LocationDto locationDto) {
         Company company = authUserInfo.getAuthenticatedCompany(); // 인증된 사용자의 회사 정보 가져오기
@@ -63,16 +65,22 @@ public class WorkServiceImpl implements WorkService {
             return ResultDTO.of(false, "CHECK_IN_FAIL", "200m 범위 밖입니다.", null);
         }
 
-        // 같은 날에 이미 출근 기록이 있는지 확인
+        // 같은 날에 이미 출근 기록(혹은 휴가)이/가 있는지 확인
         Work existingWork = workRepository.findByMemberAndDate(member, LocalDate.now());
         if (existingWork != null) {
-            // 당일 출근 기록이 있는 경우 추가 근로로 처리
             // 당일 출근 기록이 있는 경우 추가 근로로 처리
             existingWork.setWorkType(WorkType.OVERTIME); // 근무 유형을 추가 근로로 변경
             existingWork.setLatitude(locationDto.getLatitude()); // 위치 업데이트
             existingWork.setLongitude(locationDto.getLongitude());
             existingWork.setEndTime(null); // 퇴근 시간 초기화
             existingWork.setWorkTime(null); // 근무시간 초기화
+
+            /**
+            * 만약 휴가일 경우 Work 테이블에 데이터는 존재하지만 StartTime은 존재 하지 않음
+            * */
+            if (existingWork.getStartTime() == null) {
+                existingWork.setStartTime(LocalDateTime.now());
+            }
 
             try {
                 workRepository.save(existingWork);
@@ -119,7 +127,7 @@ public class WorkServiceImpl implements WorkService {
 
         // 당일 출근 기록을 가져오기
         Work existingWork = workRepository.findByMemberAndDate(member, LocalDate.now());
-        if (existingWork == null || existingWork.getStartTime() == null) {
+        if (existingWork == null && existingWork.getStartTime() == null) {
             // 출근 기록이 없거나 출근 시간이 없는 경우 체크아웃 불가
             return ResultDTO.of(false, "CHECK_OUT_FAIL", "출근 기록이 없습니다.", null);
         }

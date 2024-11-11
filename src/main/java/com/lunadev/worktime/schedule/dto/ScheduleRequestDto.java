@@ -20,7 +20,7 @@ public class ScheduleRequestDto {
 
     private Long scheduleId;
     private String scheduleName;
-    private ScheduleType scheduleType;
+    private String scheduleType;
     private String scheduleDetails;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm", timezone = "Asia/Seoul")

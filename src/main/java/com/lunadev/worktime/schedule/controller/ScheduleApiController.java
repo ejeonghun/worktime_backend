@@ -18,6 +18,11 @@ public class ScheduleApiController {
         return scheduleService.getSchedules(date);
     }
 
+    @GetMapping("detail_list")
+    public ResultDTO<Object> getScheduleDate(@RequestParam String date) {
+        return scheduleService.getScheduleDate(date);
+    }
+
     @PostMapping("create")
     public ResultDTO<Object> createSchedule(@RequestBody ScheduleRequestDto dto) {
         return scheduleService.createSchedule(dto);
@@ -28,8 +33,8 @@ public class ScheduleApiController {
         return scheduleService.updateSchedule(dto);
     }
 
-    @GetMapping("delete")
-    public ResultDTO<Object> deleteSchedule(@RequestBody Long scheduleId) {
+    @DeleteMapping("delete")
+    public ResultDTO<Object> deleteSchedule(@RequestParam Long scheduleId) {
         return scheduleService.deleteSchedule(scheduleId);
     }
 

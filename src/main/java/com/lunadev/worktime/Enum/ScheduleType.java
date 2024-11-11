@@ -1,6 +1,8 @@
 package com.lunadev.worktime.Enum;
 
 public enum ScheduleType {
-    WORK,     // 일반 근무
-    VACATION  // 휴가
+    MEETING,     // 미팅
+    BUSINESS_TRIP, // 출장
+    VACATION,  // 휴가
+    OTHER          // 기타
 }

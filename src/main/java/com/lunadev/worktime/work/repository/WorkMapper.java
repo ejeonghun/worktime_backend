@@ -16,4 +16,5 @@ public interface WorkMapper {
      * @return 근태 정보 리스트
      */
     List<WorkListDto> getWorkList(@Param("date") String date, @Param("companyId") Long companyId);
+
 }
