@@ -7,4 +7,6 @@ import org.springframework.web.multipart.MultipartFile;
 public interface MemberService {
 
     ResultDTO<Object> uploadImage(MultipartFile file);
+    ResultDTO<Object> info();
+    ResultDTO<Object> detail();
 }

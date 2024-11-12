@@ -12,4 +12,6 @@ public interface DepartmentRepository extends JpaRepository<Department, Long> {
     Department findByCompanyAndDeptName(Company company, String deptName);
 
     ArrayList<Department> findAllByCompany(Company company);
+
+
 }

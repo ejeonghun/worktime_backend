@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lunadev.worktime.member.repository.MemberMapper">
+    <select id="getMemberDetail" resultType="com.lunadev.worktime.member.dto.MemberDetailDto">
+        SELECT
+            m.member_id AS memberId,
+            m.email AS email,
+            m.name AS name,
+            m.role AS role,
+            m.position AS position,
+    d.dept_id AS deptId,
+    d.dept_name AS deptName,
+    m.image_path AS imagePath,
+    w.work_time AS workTime,
+    w.start_time AS startAt,
+    w.end_time AS endAt
+        FROM
+            member m
+            LEFT JOIN dept d ON m.dept_id = d.dept_id
+            LEFT JOIN work w ON m.member_id = w.member_id AND w.date = CURDATE()
+        WHERE
+            m.member_id = #{memberId};
+    </select>
+</mapper>

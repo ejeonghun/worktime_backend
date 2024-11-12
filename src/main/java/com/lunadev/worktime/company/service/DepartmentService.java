@@ -15,7 +15,9 @@ public interface DepartmentService {
 
     ResultDTO<Object>  delete(Long id);
 
-    ResultDTO<Object> findAll();
+    ResultDTO<Object> findAll(String verifyCode);
 
     ResultDTO<Object> join(DeptJoinDto dto);
+
+    ResultDTO<Object> MemberToDeptList();
 }

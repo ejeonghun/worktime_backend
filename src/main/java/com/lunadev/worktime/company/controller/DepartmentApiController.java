@@ -32,8 +32,13 @@ public class DepartmentApiController {
     }
 
     @GetMapping("list")
-    public ResultDTO<Object> listDepartment() {
-        return departmentService.findAll();
+    public ResultDTO<Object> listDepartment(@RequestParam String verifyCode) {
+        return departmentService.findAll(verifyCode);
+    }
+
+    @GetMapping("mlist")
+    public ResultDTO<Object> MemberToDeptList() {
+        return departmentService.MemberToDeptList();
     }
 
     @PostMapping("join")

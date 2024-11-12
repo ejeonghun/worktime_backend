@@ -1,12 +1,17 @@
 package com.lunadev.worktime.member.service.Impl;
 
+import com.lunadev.worktime.Enum.ApiResponseCode;
 import com.lunadev.worktime.auth.service.AuthService;
+import com.lunadev.worktime.member.dto.MemberDetailDto;
+import com.lunadev.worktime.member.dto.MemberInfoDto;
 import com.lunadev.worktime.member.entity.Member;
+import com.lunadev.worktime.member.repository.MemberMapper;
 import com.lunadev.worktime.member.repository.MemberRepository;
 import com.lunadev.worktime.member.service.MemberService;
 import com.lunadev.worktime.utils.AuthUserInfo;
 import com.lunadev.worktime.utils.ResultDTO;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,6 +29,8 @@ public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
     private final AuthUserInfo authUserInfo;
+    private final ModelMapper modelMapper;
+    private final MemberMapper memberMapper;
 
     @Value("${file.upload-dir}")
     private String uploadPath;
@@ -52,6 +59,30 @@ public class MemberServiceImpl implements MemberService {
             e.printStackTrace();
             return ResultDTO.of(false, "IMAGE_UPLOAD_FAIL", "이미지 업로드 실패", null);
         }
+    }
+
+
+    public ResultDTO<Object> info() {
+        Member member = authUserInfo.getAuthenticatedMember();
+        MemberInfoDto res = modelMapper.map(member, MemberInfoDto.class);
+
+        // Department가 null일 경우 예외처리
+        Long deptId = null;
+        if (member.getDepartment() != null) {
+            deptId = member.getDepartment().getDeptId();
+        }
+        res.setDeptId(deptId);
+
+        return ResultDTO.of(true, ApiResponseCode.SUCCESS.getCode(), ApiResponseCode.SUCCESS.getMessage(), res);
+    }
+
+    @Override
+    public ResultDTO<Object> detail() {
+        Member member = authUserInfo.getAuthenticatedMember();
+
+        MemberDetailDto detail = memberMapper.getMemberDetail(member.getMemberId());
+
+        return ResultDTO.of(true, ApiResponseCode.SUCCESS.getCode(), ApiResponseCode.SUCCESS.getMessage(), detail);
     }
 }
 

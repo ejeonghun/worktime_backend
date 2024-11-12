@@ -9,6 +9,7 @@ import com.lunadev.worktime.company.dto.DeptMemberListDto;
 import com.lunadev.worktime.company.entity.Company;
 import com.lunadev.worktime.company.entity.Department;
 import com.lunadev.worktime.company.repository.CompanyRepository;
+import com.lunadev.worktime.company.repository.DepartmentMapper;
 import com.lunadev.worktime.company.repository.DepartmentRepository;
 import com.lunadev.worktime.company.service.DepartmentService;
 import com.lunadev.worktime.member.entity.Member;
@@ -37,7 +38,7 @@ public class DepartmentServiceImpl implements DepartmentService {
     private final DepartmentRepository departmentRepository;
     private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
-    private final CompanyRepository companyRepository;
+    private final DepartmentMapper departmentMapper;
 
     private final AuthUserInfo authUserInfo;
 
@@ -103,17 +104,18 @@ public class DepartmentServiceImpl implements DepartmentService {
 
 
     @Override
-    public ResultDTO<Object> findAll() {
+    public ResultDTO<Object> findAll(String verifyCode) {
+        List<DeptDto> depts = departmentMapper.getDeptList(verifyCode);
+
+        return ResultDTO.of(true, ApiResponseCode.SUCCESS.getCode(), ApiResponseCode.SUCCESS.getMessage(), depts);
+    }
+
+    @Override
+    public ResultDTO<Object> MemberToDeptList() {
         Company company = authUserInfo.getAuthenticatedCompany();
-        List<Department> depts = departmentRepository.findAllByCompany(company);
+        List<DeptDto> depts = departmentMapper.getDeptList(company.getVerifyCode());
 
-        List<DeptDto> deptDtos = new ArrayList<>();
-        for (Department dept : depts) {
-            DeptDto deptDto = modelMapper.map(dept, DeptDto.class);
-            deptDtos.add(deptDto);
-        }
-
-        return ResultDTO.of(true, ApiResponseCode.SUCCESS.getCode(), ApiResponseCode.SUCCESS.getMessage(), deptDtos);
+        return ResultDTO.of(true, ApiResponseCode.SUCCESS.getCode(), ApiResponseCode.SUCCESS.getMessage(), depts);
     }
 
     @Override

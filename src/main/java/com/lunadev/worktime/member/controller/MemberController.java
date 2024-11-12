@@ -17,4 +17,14 @@ public class MemberController {
     public ResultDTO<Object> uploadMemberImage(@RequestParam("file") MultipartFile file) {
         return memberService.uploadImage(file);
     }
+
+    @GetMapping("info")
+    public ResultDTO<Object> info() {
+        return memberService.info();
+    }
+
+    @GetMapping("detail")
+    public ResultDTO<Object> detail() {
+        return memberService.detail();
+    }
 }
